@@ -62,11 +62,11 @@ const Sidebar = () => {
           aria-label="Open tools menu"
           style={{
             position: 'fixed',
-            top: '12px',
-            left: '12px',
+            top: '15px',
+            left: '8px',
             zIndex: 45,
-            width: '40px',
-            height: '40px',
+            width: '34px',
+            height: '34px',
             display: mobileOpen ? 'none' : 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -75,7 +75,7 @@ const Sidebar = () => {
             borderRadius: 'var(--radius-md)',
             boxShadow: 'var(--shadow-sm)',
             color: 'var(--color-text-main)',
-            fontSize: '1.2rem',
+            fontSize: '1.1rem',
             cursor: 'pointer',
           }}
         >
