@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import ScrollToTop from './components/layout/ScrollToTop';
@@ -19,6 +20,7 @@ function App() {
     <Router>
       <ScrollToTop />
       <LoginModal />
+      <SpeedInsights />
 
       {/* Full page layout */}
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
