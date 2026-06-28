@@ -90,7 +90,9 @@ const CompressPdf = () => {
         results[key] = blob.size * pageCount + 2000;
       }
  
-      pdf.destroy();
+      if (typeof pdf.destroy === 'function') {
+        pdf.destroy();
+      }
       setEstimates(results);
     } catch (err) {
       console.error('Estimate error:', err);
@@ -144,7 +146,9 @@ const CompressPdf = () => {
         setProgress({ current: i, total: pageCount });
       }
  
-      pdf.destroy();
+      if (typeof pdf.destroy === 'function') {
+        pdf.destroy();
+      }
  
       const pdfBytes = await newPdf.save({ useObjectStreams: true });
  
