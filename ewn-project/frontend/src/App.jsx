@@ -1,26 +1,36 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { SpeedInsights } from '@vercel/speed-insights/react';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import ScrollToTop from './components/layout/ScrollToTop';
 import Sidebar from './components/layout/Sidebar';
 import LoginModal from './components/auth/LoginModal';
+
+// Home is small and is the most likely first paint, so keep it eager.
 import Home from './pages/Home';
-import MergePdf from './pages/pdf/MergePdf';
-import CompressPdf from './pages/pdf/CompressPdf';
-import EditPdf from './pages/pdf/EditPdf';
-import PdfToImage from './pages/pdf/PdfToImage';
-import ImageToPdf from './pages/pdf/ImageToPdf';
-import WordToPdf from './pages/pdf/WordToPdf';
-import PdfToWord from './pages/pdf/PdfToWord';
+
+// Tool pages pull in heavy libraries (pdf-lib, pdfjs-dist, mammoth, jspdf,
+// docx, html2canvas, jszip) - lazy-load each one so visiting the homepage
+// doesn't download every tool's dependencies up front.
+const MergePdf = lazy(() => import('./pages/pdf/MergePdf'));
+const CompressPdf = lazy(() => import('./pages/pdf/CompressPdf'));
+const EditPdf = lazy(() => import('./pages/pdf/EditPdf'));
+const PdfToImage = lazy(() => import('./pages/pdf/PdfToImage'));
+const ImageToPdf = lazy(() => import('./pages/pdf/ImageToPdf'));
+const WordToPdf = lazy(() => import('./pages/pdf/WordToPdf'));
+const PdfToWord = lazy(() => import('./pages/pdf/PdfToWord'));
+
+const PageLoader = () => (
+  <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem 0', color: 'var(--color-text-muted)' }}>
+    Loading tool...
+  </div>
+);
 
 function App() {
   return (
     <Router>
       <ScrollToTop />
       <LoginModal />
-      <SpeedInsights />
 
       {/* Full page layout */}
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -35,16 +45,18 @@ function App() {
           {/* Main content area grows to fill remaining space */}
           <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
             <main style={{ flex: 1, padding: '2rem 1.5rem 4rem', maxWidth: '1100px', width: '100%', margin: '0 auto' }}>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/merge-pdf" element={<MergePdf />} />
-                <Route path="/compress-pdf" element={<CompressPdf />} />
-                <Route path="/edit-pdf" element={<EditPdf />} />
-                <Route path="/pdf-to-image" element={<PdfToImage />} />
-                <Route path="/image-to-pdf" element={<ImageToPdf />} />
-                <Route path="/word-to-pdf" element={<WordToPdf />} />
-                <Route path="/pdf-to-word" element={<PdfToWord />} />
-              </Routes>
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/merge-pdf" element={<MergePdf />} />
+                  <Route path="/compress-pdf" element={<CompressPdf />} />
+                  <Route path="/edit-pdf" element={<EditPdf />} />
+                  <Route path="/pdf-to-image" element={<PdfToImage />} />
+                  <Route path="/image-to-pdf" element={<ImageToPdf />} />
+                  <Route path="/word-to-pdf" element={<WordToPdf />} />
+                  <Route path="/pdf-to-word" element={<PdfToWord />} />
+                </Routes>
+              </Suspense>
             </main>
             <Footer />
           </div>
@@ -55,3 +67,4 @@ function App() {
 }
 
 export default App;
+
