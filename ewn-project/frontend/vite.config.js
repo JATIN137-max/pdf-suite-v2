@@ -24,13 +24,15 @@ export default defineConfig({
     sourcemap: true,
     rollupOptions: {
       output: {
-        manualChunks: {
+        manualChunks(id) {
           // Keep heavy, rarely-co-used libraries in their own chunks
           // so visiting one tool doesn't pull in another tool's library
-          pdf: ['pdf-lib', 'pdfjs-dist'],
-          docx: ['docx', 'mammoth'],
-          'pdf-export': ['jspdf', 'html2canvas'],
-          jszip: ['jszip'],
+          if (id.includes('node_modules')) {
+            if (id.includes('pdf-lib') || id.includes('pdfjs-dist')) return 'pdf';
+            if (id.includes('docx') || id.includes('mammoth')) return 'docx';
+            if (id.includes('jspdf') || id.includes('html2canvas')) return 'pdf-export';
+            if (id.includes('jszip')) return 'jszip';
+          }
         },
       },
     },
