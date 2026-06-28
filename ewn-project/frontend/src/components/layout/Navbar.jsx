@@ -62,17 +62,31 @@ const Navbar = () => {
             textDecoration: 'none',
             display: 'flex',
             alignItems: 'center',
-            gap: '0.5rem',
+            gap: isMobile ? '0.4rem' : '0.5rem',
             cursor: 'pointer',
             minWidth: 0,
-            paddingLeft: isMobile ? '44px' : 0,
+            paddingLeft: isMobile ? '38px' : 0,
             flexShrink: 0,
           }}
         >
-          <div style={{ backgroundColor: 'var(--color-blue)', color: 'white', fontWeight: '800', fontSize: isMobile ? '1.15rem' : '1.5rem', padding: '0.2rem 0.6rem', borderRadius: 'var(--radius-md)', flexShrink: 0 }}>
+          <div style={{ backgroundColor: 'var(--color-blue)', color: 'white', fontWeight: '800', fontSize: isMobile ? '1.1rem' : '1.5rem', padding: isMobile ? '0.2rem 0.5rem' : '0.2rem 0.6rem', borderRadius: 'var(--radius-md)', flexShrink: 0, letterSpacing: '0.02em' }}>
             EWN
           </div>
-          {!isMobile && (
+          {isMobile ? (
+            <span style={{
+              fontSize: '0.62rem',
+              fontWeight: '700',
+              color: 'var(--color-text-muted)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+              lineHeight: '1.15',
+              whiteSpace: 'nowrap',
+              borderLeft: '2px solid var(--color-border)',
+              paddingLeft: '0.4rem',
+            }}>
+              Everything<br />What's Needed
+            </span>
+          ) : (
             <span style={{ fontWeight: '700', fontSize: '1.25rem', color: 'var(--color-text-main)', whiteSpace: 'nowrap' }}>
               Everything What's Needed
             </span>
@@ -145,4 +159,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
