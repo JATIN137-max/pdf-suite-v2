@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
   FiLayers, FiMinimize2, FiEdit3, FiImage, FiFileText,
-  FiChevronLeft, FiChevronRight, FiGrid
+  FiChevronLeft, FiChevronRight, FiGrid, FiMenu, FiX
 } from 'react-icons/fi';
 
 const tools = [
@@ -16,37 +16,111 @@ const tools = [
   { label: 'PDF to Word', path: '/pdf-to-word', icon: <FiFileText />, color: '#ef4444' },
 ];
 
+// Match this to the CSS breakpoint below
+const MOBILE_BREAKPOINT = 768;
+
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.innerWidth <= MOBILE_BREAKPOINT : false
+  );
+  const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+
+  // Track viewport so we know whether to render desktop or mobile mode
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Close the mobile drawer whenever the route changes
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
+
+  // Prevent body scroll while the mobile drawer is open
+  useEffect(() => {
+    if (isMobile && mobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isMobile, mobileOpen]);
+
+  const effectiveCollapsed = isMobile ? false : collapsed;
+  // On mobile, the sidebar is either fully open (drawer) or fully hidden
+  const sidebarWidth = isMobile ? '240px' : (effectiveCollapsed ? '60px' : '220px');
 
   return (
     <>
+      {/* Mobile hamburger trigger - only rendered on mobile, sits in normal flow */}
+      {isMobile && (
+        <button
+          onClick={() => setMobileOpen(true)}
+          aria-label="Open tools menu"
+          style={{
+            position: 'fixed',
+            top: '12px',
+            left: '12px',
+            zIndex: 45,
+            width: '40px',
+            height: '40px',
+            display: mobileOpen ? 'none' : 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'var(--color-white)',
+            border: '1px solid var(--color-border)',
+            borderRadius: 'var(--radius-md)',
+            boxShadow: 'var(--shadow-sm)',
+            color: 'var(--color-text-main)',
+            fontSize: '1.2rem',
+            cursor: 'pointer',
+          }}
+        >
+          <FiMenu />
+        </button>
+      )}
+
+      {/* Backdrop overlay, mobile only, only when drawer is open */}
+      {isMobile && mobileOpen && (
+        <div
+          onClick={() => setMobileOpen(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(0,0,0,0.45)',
+            zIndex: 39,
+          }}
+        />
+      )}
+
       {/* Sidebar */}
       <aside style={{
         position: 'fixed',
-        top: '70px', // below navbar
-        left: 0,
-        height: 'calc(100vh - 70px)',
-        width: collapsed ? '60px' : '220px',
+        top: isMobile ? 0 : '70px', // full height drawer on mobile, below navbar on desktop
+        left: isMobile && !mobileOpen ? `-${sidebarWidth}` : 0,
+        height: isMobile ? '100vh' : 'calc(100vh - 70px)',
+        width: sidebarWidth,
         backgroundColor: 'var(--color-white)',
         borderRight: '1px solid var(--color-border)',
-        boxShadow: '2px 0 8px rgba(0,0,0,0.04)',
+        boxShadow: isMobile ? '4px 0 16px rgba(0,0,0,0.15)' : '2px 0 8px rgba(0,0,0,0.04)',
         display: 'flex',
         flexDirection: 'column',
-        transition: 'width 0.25s cubic-bezier(0.4,0,0.2,1)',
+        transition: isMobile ? 'left 0.25s cubic-bezier(0.4,0,0.2,1)' : 'width 0.25s cubic-bezier(0.4,0,0.2,1)',
         zIndex: 40,
         overflowX: 'hidden',
         overflowY: 'auto',
       }}>
-        {/* Toggle button */}
+        {/* Toggle / close button */}
         <button
-          onClick={() => setCollapsed(!collapsed)}
-          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          onClick={() => isMobile ? setMobileOpen(false) : setCollapsed(!collapsed)}
+          title={isMobile ? 'Close menu' : (collapsed ? 'Expand sidebar' : 'Collapse sidebar')}
           style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: collapsed ? 'center' : 'flex-end',
+            justifyContent: (effectiveCollapsed && !isMobile) ? 'center' : 'flex-end',
             padding: '0.75rem 1rem',
             background: 'none',
             border: 'none',
@@ -60,7 +134,7 @@ const Sidebar = () => {
           onMouseEnter={e => e.currentTarget.style.color = 'var(--color-blue)'}
           onMouseLeave={e => e.currentTarget.style.color = 'var(--color-text-muted)'}
         >
-          {collapsed ? <FiChevronRight /> : <FiChevronLeft />}
+          {isMobile ? <FiX /> : (collapsed ? <FiChevronRight /> : <FiChevronLeft />)}
         </button>
 
         {/* Tool links */}
@@ -76,8 +150,8 @@ const Sidebar = () => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.75rem',
-                  padding: collapsed ? '0.8rem' : '0.75rem 1rem',
-                  justifyContent: collapsed ? 'center' : 'flex-start',
+                  padding: effectiveCollapsed ? '0.8rem' : '0.75rem 1rem',
+                  justifyContent: effectiveCollapsed ? 'center' : 'flex-start',
                   textDecoration: 'none',
                   color: isActive ? tool.color : 'var(--color-text-muted)',
                   backgroundColor: isActive ? (
@@ -113,7 +187,7 @@ const Sidebar = () => {
                 }}>
                   {tool.icon}
                 </span>
-                {!collapsed && (
+                {!effectiveCollapsed && (
                   <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {tool.label}
                   </span>
@@ -124,7 +198,7 @@ const Sidebar = () => {
         </nav>
 
         {/* Bottom label */}
-        {!collapsed && (
+        {!effectiveCollapsed && (
           <div style={{
             padding: '1rem',
             borderTop: '1px solid var(--color-border)',
@@ -139,10 +213,15 @@ const Sidebar = () => {
         )}
       </aside>
 
-      {/* Spacer so main content doesn't hide behind sidebar */}
-      <div style={{ width: collapsed ? '60px' : '220px', flexShrink: 0, transition: 'width 0.25s cubic-bezier(0.4,0,0.2,1)' }} />
+      {/* Spacer so main content doesn't hide behind sidebar - collapses to 0 on mobile since drawer floats over content */}
+      <div style={{
+        width: isMobile ? 0 : (effectiveCollapsed ? '60px' : '220px'),
+        flexShrink: 0,
+        transition: 'width 0.25s cubic-bezier(0.4,0,0.2,1)',
+      }} />
     </>
   );
 };
 
 export default Sidebar;
+
