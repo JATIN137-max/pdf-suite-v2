@@ -15,10 +15,10 @@ const Footer = () => {
           The ultimate suite of tools for all your daily needs. Fast, secure, and right in your browser.
         </p>
         <div style={{ display: 'flex', gap: '1.5rem', marginTop: '1rem' }}>
-          {/* Updated Links to point to the legal pages */}
-          <Link to="/legal/privacy-policy" style={{ color: 'var(--color-text-muted)', textDecoration: 'none' }}>Privacy Policy</Link>
-          <Link to="/legal/terms-of-service" style={{ color: 'var(--color-text-muted)', textDecoration: 'none' }}>Terms of Service</Link>
-          <Link to="/legal/contact" style={{ color: 'var(--color-text-muted)', textDecoration: 'none' }}>Contact</Link>
+          {/* THESE LINKS NOW MATCH YOUR ROUTING FILE EXACTLY */}
+          <Link to="/privacy" style={{ color: 'var(--color-text-muted)', textDecoration: 'none' }}>Privacy Policy</Link>
+          <Link to="/terms" style={{ color: 'var(--color-text-muted)', textDecoration: 'none' }}>Terms of Service</Link>
+          <Link to="/contact" style={{ color: 'var(--color-text-muted)', textDecoration: 'none' }}>Contact</Link>
         </div>
         <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem', marginTop: '2rem' }}>
           &copy; {new Date().getFullYear()} EWN. All rights reserved.
