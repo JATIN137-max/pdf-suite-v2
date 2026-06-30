@@ -37,6 +37,7 @@ let ads = [
 
 const authController = require('./controllers/authController');
 const blogController = require('./controllers/blogController');
+const seedController = require('./controllers/seedController');
 
 // Routes
 app.get('/api/ads', (req, res) => {
@@ -51,6 +52,7 @@ app.post('/api/auth/upgrade', authController.upgrade);
 // Blog Routes
 app.get('/api/blog', blogController.listPosts);
 app.get('/api/blog/:slug', blogController.getPostBySlug);
+app.get('/api/seed-blog', seedController.seedBlog);
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, { 
