@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import AdBanner from '../components/ads/AdBanner';
+import SEO from '../components/SEO';
 import { useAuth } from '../context/AuthContext';
 import { FiLayers, FiMinimize2, FiEdit3, FiImage, FiFileText, FiUnlock, FiZap } from 'react-icons/fi';
 
@@ -68,6 +69,12 @@ const Home = () => {
 
   return (
     <div className="animate-slide-up">
+      <SEO
+        title="EWN - Free Online PDF Tools | Merge, Compress, Edit & Convert"
+        description="Free online PDF tools - merge, compress, edit, and convert PDFs instantly in your browser. No installs, no signup required for your first 10 uses."
+        path="/"
+      />
+
       <div className="page-header">
         <h1 className="page-title">Every Tool You Need. In One Place.</h1>
         <p className="page-subtitle">
@@ -129,4 +136,3 @@ const Home = () => {
 };
 
 export default Home;
-
