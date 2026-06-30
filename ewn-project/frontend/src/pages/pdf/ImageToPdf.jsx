@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PDFDocument } from 'pdf-lib';
 import AdBanner from '../../components/ads/AdBanner';
+import SEO from '../../components/SEO';
 import { useAuth } from '../../context/AuthContext';
 import { FiUploadCloud, FiImage, FiTrash2, FiCheckCircle } from 'react-icons/fi';
 
@@ -67,6 +68,12 @@ const ImageToPdf = () => {
 
   return (
     <div className="animate-slide-up" style={{ maxWidth: '800px', margin: '0 auto', paddingTop: '2rem' }}>
+      <SEO
+        title="Convert JPG to PDF Online Free | EWN"
+        description="Combine JPG or PNG images into a single PDF file for free, right in your browser."
+        path="/image-to-pdf"
+      />
+
       <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
         <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: 'var(--color-green)' }}>JPG/PNG to PDF</h1>
         <p style={{ color: 'var(--color-text-muted)' }}>Convert your images to a single PDF document.</p>
