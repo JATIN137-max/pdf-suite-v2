@@ -21,6 +21,9 @@ const WordToPdf = lazy(() => import('./pages/pdf/WordToPdf'));
 const PdfToWord = lazy(() => import('./pages/pdf/PdfToWord'));
 const BlogList = lazy(() => import('./pages/blogs/BlogList'));
 const BlogPost = lazy(() => import('./pages/blogs/BlogPost'));
+const Contact = lazy(() => import('./pages/legal/Contact'));
+const TermsOfService = lazy(() => import('./pages/legal/TermsOfService'));
+const PrivacyPolicy = lazy(() => import('./pages/legal/PrivacyPolicy'));
 
 const PageLoader = () => (
   <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem 0', color: 'var(--color-text-muted)' }}>
@@ -59,6 +62,9 @@ function App() {
                   <Route path="/pdf-to-word" element={<PdfToWord />} />
                   <Route path="/blog" element={<BlogList />} />
                   <Route path="/blog/:slug" element={<BlogPost />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/terms" element={<TermsOfService />} />
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
                 </Routes>
               </Suspense>
             </main>
