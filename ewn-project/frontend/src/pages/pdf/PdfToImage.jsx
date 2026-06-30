@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { pdfjs } from 'react-pdf';
 import JSZip from 'jszip';
 import AdBanner from '../../components/ads/AdBanner';
+import SEO from '../../components/SEO';
 import { useAuth } from '../../context/AuthContext';
 import { FiUploadCloud, FiImage, FiCheckCircle, FiDownload } from 'react-icons/fi';
 
@@ -69,6 +70,12 @@ const PdfToImage = () => {
 
   return (
     <div className="animate-slide-up" style={{ maxWidth: '800px', margin: '0 auto', paddingTop: '2rem' }}>
+      <SEO
+        title="Convert PDF to JPG Online Free | EWN"
+        description="Turn PDF pages into JPG images instantly. Free, fast, and processed entirely in your browser."
+        path="/pdf-to-image"
+      />
+
       <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
         <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: 'var(--color-blue)' }}>PDF to JPG</h1>
         <p style={{ color: 'var(--color-text-muted)' }}>Convert every page of a PDF into high-quality JPG images.</p>
