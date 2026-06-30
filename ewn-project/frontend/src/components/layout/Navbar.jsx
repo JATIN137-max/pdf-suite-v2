@@ -99,6 +99,7 @@ const Navbar = () => {
             <Link to="/" style={navLinkStyle} onMouseOver={linkHover} onMouseOut={linkOut}>Home</Link>
             <Link to="/merge-pdf" style={navLinkStyle} onMouseOver={linkHover} onMouseOut={linkOut}>Merge PDF</Link>
             <Link to="/edit-pdf" style={navLinkStyle} onMouseOver={linkHover} onMouseOut={linkOut}>Edit PDF</Link>
+            <Link to="/blog" style={navLinkStyle} onMouseOver={linkHover} onMouseOut={linkOut}>Blog</Link>
             {authBlock}
           </nav>
         )}
@@ -149,6 +150,7 @@ const Navbar = () => {
           <Link to="/" style={navLinkStyle} onClick={() => setIsOpen(false)}>Home</Link>
           <Link to="/merge-pdf" style={navLinkStyle} onClick={() => setIsOpen(false)}>Merge PDF</Link>
           <Link to="/edit-pdf" style={navLinkStyle} onClick={() => setIsOpen(false)}>Edit PDF</Link>
+          <Link to="/blog" style={navLinkStyle} onClick={() => setIsOpen(false)}>Blog</Link>
           <div style={{ paddingTop: '0.5rem', borderTop: '1px solid var(--color-border)' }}>
             {authBlock}
           </div>
