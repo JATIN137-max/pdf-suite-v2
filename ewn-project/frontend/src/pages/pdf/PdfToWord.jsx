@@ -6,13 +6,11 @@ import SEO from '../../components/SEO';
 import { useAuth } from '../../context/AuthContext';
 import { FiUploadCloud, FiFileText, FiCheckCircle } from 'react-icons/fi';
 
-// Vite-safe worker setup: resolves the worker file at build time instead of
-// relying on a CDN URL, which can break across pdfjs-dist versions or if
-// the CDN request fails/is blocked.
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.mjs',
-  import.meta.url
-).toString();
+// Worker setup: must match react-pdf's INTERNAL pdfjs-dist version, not the
+// top-level pdfjs-dist in package.json (they can differ and silently mismatch,
+// e.g. "API version does not match Worker version" errors). Using pdfjs.version
+// here pins the worker fetch to whatever version react-pdf actually bundles.
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 const PdfToWord = () => {
   const { canUseTool, incrementUsage } = useAuth();
