@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { pdfjs } from 'react-pdf';
 import { Document, Packer, Paragraph, TextRun } from 'docx';
 import AdBanner from '../../components/ads/AdBanner';
+import SEO from '../../components/SEO';
 import { useAuth } from '../../context/AuthContext';
 import { FiUploadCloud, FiFileText, FiCheckCircle } from 'react-icons/fi';
 
@@ -75,6 +76,12 @@ const PdfToWord = () => {
 
   return (
     <div className="animate-slide-up" style={{ maxWidth: '800px', margin: '0 auto', paddingTop: '2rem' }}>
+      <SEO
+        title="Convert PDF to Word Online Free | EWN"
+        description="Convert PDF files into editable Word documents for free, right in your browser."
+        path="/pdf-to-word"
+      />
+
       <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
         <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: 'var(--color-blue)' }}>PDF to Word</h1>
         <p style={{ color: 'var(--color-text-muted)' }}>Extract text from your PDF into a Word document.</p>
