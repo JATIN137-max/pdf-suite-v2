@@ -25,38 +25,95 @@ const ImageToPdf = () => {
     setFiles(files.filter((_, i) => i !== index));
   };
 
+  // Loads a File as an <img>, draws it to canvas, and returns clean JPEG bytes.
+  // This sidesteps malformed/mislabeled files (e.g. a renamed WebP, a HEIC
+  // saved with a .jpg extension, or a WhatsApp image with non-standard
+  // encoding) since the browser's native image decoder - not pdf-lib's
+  // strict byte-level JPEG parser - handles the actual decoding.
+  const normalizeImageToJpeg = (file) => {
+    return new Promise((resolve, reject) => {
+      const img = new window.Image();
+      const objectUrl = URL.createObjectURL(file);
+
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext('2d');
+
+        // White background avoids transparent PNGs producing a black
+        // background once flattened to JPEG.
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+
+        canvas.toBlob(
+          (blob) => {
+            URL.revokeObjectURL(objectUrl);
+            if (!blob) {
+              reject(new Error('Could not re-encode image'));
+              return;
+            }
+            resolve({ blob, width: canvas.width, height: canvas.height });
+          },
+          'image/jpeg',
+          0.92
+        );
+      };
+
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        reject(new Error('Browser could not decode this image - it may be corrupted or an unsupported format'));
+      };
+
+      img.src = objectUrl;
+    });
+  };
+
   const convertToPdf = async () => {
     if (files.length === 0 || !canUseTool()) return;
     setIsConverting(true);
-    
+    setError(null);
+
+    const failedFiles = [];
+
     try {
       const pdfDoc = await PDFDocument.create();
       
       for (const file of files) {
-        const fileArrayBuffer = await file.arrayBuffer();
-        let image;
-        if (file.type === 'image/jpeg' || file.type === 'image/jpg') {
-          image = await pdfDoc.embedJpg(fileArrayBuffer);
-        } else if (file.type === 'image/png') {
-          image = await pdfDoc.embedPng(fileArrayBuffer);
-        } else {
-          continue; // skip unsupported formats
+        try {
+          const { blob, width, height } = await normalizeImageToJpeg(file);
+          const jpegBytes = await blob.arrayBuffer();
+          const image = await pdfDoc.embedJpg(jpegBytes);
+
+          const page = pdfDoc.addPage([width, height]);
+          page.drawImage(image, {
+            x: 0,
+            y: 0,
+            width,
+            height,
+          });
+        } catch (fileErr) {
+          console.error(`Failed to process ${file.name}:`, fileErr);
+          failedFiles.push(file.name);
         }
-        
-        const { width, height } = image.scale(1);
-        const page = pdfDoc.addPage([width, height]);
-        page.drawImage(image, {
-          x: 0,
-          y: 0,
-          width: width,
-          height: height,
-        });
       }
-      
+
+      if (pdfDoc.getPageCount() === 0) {
+        setError('None of the selected images could be converted. They may be corrupted or an unsupported format.');
+        setIsConverting(false);
+        return;
+      }
+
       const pdfBytes = await pdfDoc.save();
       const blob = new Blob([pdfBytes], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       setPdfUrl(url);
+
+      if (failedFiles.length > 0) {
+        setError(`Note: ${failedFiles.length} file(s) could not be processed and were skipped: ${failedFiles.join(', ')}`);
+      }
+
       incrementUsage();
     } catch (err) {
       console.error(err);
@@ -122,6 +179,11 @@ const ImageToPdf = () => {
         <div className="card animate-fade-in" style={{ textAlign: 'center', padding: '4rem 2rem' }}>
           <FiCheckCircle style={{ fontSize: '5rem', color: 'var(--color-green)', margin: '0 auto 1.5rem' }} />
           <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Converted Successfully!</h2>
+          {error && (
+            <div style={{ color: 'var(--color-red)', backgroundColor: 'var(--color-red-light)', padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem', fontSize: '0.875rem', textAlign: 'left' }}>
+              {error}
+            </div>
+          )}
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
             <a href={pdfUrl} download="images_ewn.pdf" className="btn btn-success" style={{ textDecoration: 'none' }}>Download PDF</a>
             <button className="btn btn-outline" onClick={() => { setFiles([]); setPdfUrl(null); }}>Convert More</button>
