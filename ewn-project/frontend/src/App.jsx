@@ -19,6 +19,8 @@ const PdfToImage = lazy(() => import('./pages/pdf/PdfToImage'));
 const ImageToPdf = lazy(() => import('./pages/pdf/ImageToPdf'));
 const WordToPdf = lazy(() => import('./pages/pdf/WordToPdf'));
 const PdfToWord = lazy(() => import('./pages/pdf/PdfToWord'));
+const BlogList = lazy(() => import('./pages/blog/BlogList'));
+const BlogPost = lazy(() => import('./pages/blog/BlogPost'));
 
 const PageLoader = () => (
   <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem 0', color: 'var(--color-text-muted)' }}>
@@ -55,6 +57,8 @@ function App() {
                   <Route path="/image-to-pdf" element={<ImageToPdf />} />
                   <Route path="/word-to-pdf" element={<WordToPdf />} />
                   <Route path="/pdf-to-word" element={<PdfToWord />} />
+                  <Route path="/blog" element={<BlogList />} />
+                  <Route path="/blog/:slug" element={<BlogPost />} />
                 </Routes>
               </Suspense>
             </main>
@@ -67,4 +71,3 @@ function App() {
 }
 
 export default App;
-
