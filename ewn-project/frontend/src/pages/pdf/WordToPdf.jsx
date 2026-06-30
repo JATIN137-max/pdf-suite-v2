@@ -3,6 +3,7 @@ import mammoth from 'mammoth';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import AdBanner from '../../components/ads/AdBanner';
+import SEO from '../../components/SEO';
 import { useAuth } from '../../context/AuthContext';
 import { FiUploadCloud, FiFileText, FiCheckCircle } from 'react-icons/fi';
 
@@ -79,6 +80,12 @@ const WordToPdf = () => {
 
   return (
     <div className="animate-slide-up" style={{ maxWidth: '800px', margin: '0 auto', paddingTop: '2rem' }}>
+      <SEO
+        title="Convert Word to PDF Online Free | EWN"
+        description="Convert Word documents (.docx) to PDF for free, instantly, with no signup required."
+        path="/word-to-pdf"
+      />
+
       <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
         <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: 'var(--color-blue)' }}>Word to PDF</h1>
         <p style={{ color: 'var(--color-text-muted)' }}>
