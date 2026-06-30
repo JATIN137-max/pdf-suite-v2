@@ -36,6 +36,7 @@ let ads = [
 ];
 
 const authController = require('./controllers/authController');
+const blogController = require('./controllers/blogController');
 
 // Routes
 app.get('/api/ads', (req, res) => {
@@ -46,6 +47,10 @@ app.get('/api/ads', (req, res) => {
 app.post('/api/auth/register', authController.register);
 app.post('/api/auth/login', authController.login);
 app.post('/api/auth/upgrade', authController.upgrade);
+
+// Blog Routes
+app.get('/api/blog', blogController.listPosts);
+app.get('/api/blog/:slug', blogController.getPostBySlug);
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, { 
