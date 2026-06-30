@@ -6,6 +6,14 @@ import SEO from '../../components/SEO';
 import { useAuth } from '../../context/AuthContext';
 import { FiUploadCloud, FiImage, FiCheckCircle, FiDownload } from 'react-icons/fi';
 
+// Vite-safe worker setup: resolves the worker file at build time instead of
+// relying on a CDN URL, which can break across pdfjs-dist versions or if
+// the CDN request fails/is blocked.
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.mjs',
+  import.meta.url
+).toString();
+
 const PdfToImage = () => {
   const { canUseTool, incrementUsage } = useAuth();
   const [file, setFile] = useState(null);
