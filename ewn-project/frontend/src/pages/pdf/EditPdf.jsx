@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { PDFDocument, degrees } from 'pdf-lib';
 import { Document, Page, pdfjs } from 'react-pdf';
 import AdBanner from '../../components/ads/AdBanner';
+import SEO from '../../components/SEO';
 import { useAuth } from '../../context/AuthContext';
 import { FiUploadCloud, FiTrash2, FiRotateCw, FiCheckCircle, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
@@ -93,6 +94,12 @@ const EditPdf = () => {
 
   return (
     <div className="animate-slide-up" style={{ maxWidth: '1000px', margin: '0 auto', paddingTop: '2rem' }}>
+      <SEO
+        title="Edit PDF Online Free | EWN"
+        description="Edit your PDF files for free, directly in your browser. Rotate, reorder, and delete pages visually - no signup required for your first uses."
+        path="/edit-pdf"
+      />
+
       <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
         <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: 'var(--color-red)' }}>Edit PDF</h1>
         <p style={{ color: 'var(--color-text-muted)' }}>Rotate, reorder, and delete pages visually.</p>
@@ -160,7 +167,7 @@ const EditPdf = () => {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
-                <button className="btn btn-primary" style={{ backgroundColor: 'var(--color-red)', fontSize: '1.25rem', padding: '1rem 3rem' }} onClick={savePdf} disabled={isProcessing || !pages.some(p => !p.deleted)}>
+                <button className="btn btn-primary" style={{ backgroundColor: 'var(--color-red)', fontSize: '1.25rem', padding: '1rem 3rem' }} onClick={handleApplyChanges} disabled={isProcessing || !pages.some(p => !p.deleted)}>
                   {isProcessing ? 'Processing...' : 'Apply Changes & Download'}
                 </button>
               </div>
