@@ -3,7 +3,7 @@ import SEO from '../../components/SEO';
 import { FiMail, FiClock, FiHelpCircle } from 'react-icons/fi';
 
 // TODO: replace with your real support email before going live
-const SUPPORT_EMAIL = 'support@yourdomain.com';
+const SUPPORT_EMAIL = 'jatindhiman1372006@gmail.com';
 
 const cardStyle = {
   display: 'flex',
