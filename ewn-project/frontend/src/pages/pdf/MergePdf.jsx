@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PDFDocument } from 'pdf-lib';
 import AdBanner from '../../components/ads/AdBanner';
+import SEO from '../../components/SEO';
 import { useAuth } from '../../context/AuthContext';
 import { FiUploadCloud, FiFile, FiTrash2, FiCheckCircle } from 'react-icons/fi';
 
@@ -63,6 +64,12 @@ const MergePdf = () => {
 
   return (
     <div className="animate-slide-up" style={{ maxWidth: '800px', margin: '0 auto', paddingTop: '2rem' }}>
+      <SEO
+        title="Merge PDF Files Online Free - No Signup | EWN"
+        description="Combine multiple PDF files into one document instantly. Free, fast, and works right in your browser - no file uploads to a server."
+        path="/merge-pdf"
+      />
+
       <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
         <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: 'var(--color-blue)' }}>Merge PDF</h1>
         <p style={{ color: 'var(--color-text-muted)' }}>Combine multiple PDF files into one easily.</p>
