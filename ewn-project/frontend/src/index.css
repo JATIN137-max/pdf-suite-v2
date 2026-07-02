@@ -350,10 +350,11 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-hover);
-    padding: 0.75rem;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(170px, 1fr));
-    gap: 0.35rem;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 220px;
     z-index: 60;
     animation: navPanelIn 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
@@ -369,6 +370,17 @@ h1, h2, h3, h4, h5, h6 {
     border-left: 1px solid var(--color-border);
     border-top: 1px solid var(--color-border);
     transform: rotate(45deg);
+  }
+
+  /* FIX APPLIED HERE: Invisible bridge to stop the hover gap */
+  .nav-tools-panel::after {
+    content: '';
+    position: absolute;
+    top: -15px;
+    left: 0;
+    width: 100%;
+    height: 15px;
+    background: transparent;
   }
 
   .nav-tools-item {
@@ -399,8 +411,60 @@ h1, h2, h3, h4, h5, h6 {
     flex-shrink: 0;
   }
 
-  /* Desktop auth chip — replaces the crowded "Hi, name" + outline-button
-     pairing (still used on mobile) with one grouped, consistent-height pill. */
+  .nav-tools-category-wrap {
+    position: relative;
+  }
+
+  .nav-tools-category-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.55rem 0.6rem;
+    border-radius: var(--radius-md);
+    border: none;
+    background: none;
+    text-align: left;
+    color: var(--color-text-main);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s;
+  }
+
+  .nav-tools-category-row:hover,
+  .nav-tools-category-row.is-active {
+    background-color: var(--color-bg-light);
+  }
+
+  .nav-tools-category-label {
+    flex: 1;
+  }
+
+  .nav-tools-category-chevron {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  .nav-tools-subpanel {
+    position: absolute;
+    top: 0;
+    left: calc(100% + 0.5rem);
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-hover);
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 200px;
+    z-index: 61;
+    animation: navPanelIn 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
   .nav-user-chip {
     display: flex;
     align-items: center;
@@ -521,7 +585,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .tool-section-arrows {
-  display: none; /* shown on desktop only, see media query below */
+  display: none; 
   gap: 0.5rem;
 }
 
@@ -588,8 +652,6 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.85rem;
 }
 
-/* Desktop: reveal arrow controls, widen cards slightly since there's more
-   room per card and hover states matter more than on touch. */
 @media (min-width: 769px) {
   .tool-section-arrows {
     display: flex;

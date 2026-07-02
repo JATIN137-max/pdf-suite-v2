@@ -1,27 +1,34 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FiMenu, FiX, FiChevronDown, FiLayers, FiMinimize2, FiEdit3, FiImage, FiFileText } from 'react-icons/fi';
+import { FiMenu, FiX, FiChevronDown, FiChevronRight, FiLayers, FiMinimize2, FiEdit3, FiImage, FiFileText } from 'react-icons/fi';
 
 const MOBILE_BREAKPOINT = 768;
 
-// Desktop-only "Tools" mega-menu contents. Merge PDF and Edit PDF now live
-// here instead of as flat top-level links — reachable in one hover/click,
-// same as before, just no longer eating horizontal nav space permanently.
-const desktopTools = [
-  { title: 'Merge PDF', path: '/merge-pdf', icon: <FiLayers />, colorClass: 'icon-blue' },
-  { title: 'Compress PDF', path: '/compress-pdf', icon: <FiMinimize2 />, colorClass: 'icon-green' },
-  { title: 'Edit PDF', path: '/edit-pdf', icon: <FiEdit3 />, colorClass: 'icon-red' },
-  { title: 'PDF to JPG', path: '/pdf-to-image', icon: <FiImage />, colorClass: 'icon-blue' },
-  { title: 'JPG to PDF', path: '/image-to-pdf', icon: <FiFileText />, colorClass: 'icon-green' },
-  { title: 'Word to PDF', path: '/word-to-pdf', icon: <FiFileText />, colorClass: 'icon-blue' },
-  { title: 'PDF to Word', path: '/pdf-to-word', icon: <FiFileText />, colorClass: 'icon-red' },
+const toolCategories = [
+  {
+    id: 'pdf',
+    label: 'PDF Tools',
+    icon: <FiFileText />,
+    colorClass: 'icon-blue',
+    tools: [
+      { title: 'Merge PDF', path: '/merge-pdf', icon: <FiLayers />, colorClass: 'icon-blue' },
+      { title: 'Compress PDF', path: '/compress-pdf', icon: <FiMinimize2 />, colorClass: 'icon-green' },
+      { title: 'Edit PDF', path: '/edit-pdf', icon: <FiEdit3 />, colorClass: 'icon-red' },
+      { title: 'PDF to JPG', path: '/pdf-to-image', icon: <FiImage />, colorClass: 'icon-blue' },
+      { title: 'JPG to PDF', path: '/image-to-pdf', icon: <FiFileText />, colorClass: 'icon-green' },
+      { title: 'Word to PDF', path: '/word-to-pdf', icon: <FiFileText />, colorClass: 'icon-blue' },
+      { title: 'PDF to Word', path: '/pdf-to-word', icon: <FiFileText />, colorClass: 'icon-red' },
+    ],
+  },
 ];
 
 const Navbar = () => {
   const { user, remainingUses, setShowLoginModal, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState(null); 
+  const [mobileCategoryOpen, setMobileCategoryOpen] = useState(null); 
   const toolsRef = useRef(null);
   const [isMobile, setIsMobile] = useState(
     typeof window !== 'undefined' ? window.innerWidth <= MOBILE_BREAKPOINT : false
@@ -33,14 +40,20 @@ const Navbar = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Desktop-only: close the Tools mega-menu on outside click (covers
-  // trackpad taps that don't fire mouseleave) and on Escape.
   useEffect(() => {
     if (!toolsOpen) return;
     const handleClick = (e) => {
-      if (toolsRef.current && !toolsRef.current.contains(e.target)) setToolsOpen(false);
+      if (toolsRef.current && !toolsRef.current.contains(e.target)) {
+        setToolsOpen(false);
+        setActiveCategory(null);
+      }
     };
-    const handleKey = (e) => { if (e.key === 'Escape') setToolsOpen(false); };
+    const handleKey = (e) => {
+      if (e.key === 'Escape') {
+        setToolsOpen(false);
+        setActiveCategory(null);
+      }
+    };
     document.addEventListener('mousedown', handleClick);
     document.addEventListener('keydown', handleKey);
     return () => {
@@ -82,10 +95,6 @@ const Navbar = () => {
     </div>
   );
 
-  // Desktop-only auth treatment: mobile keeps the plain text+button pairing
-  // above (authBlock), but that combination reads as crowded/misaligned at
-  // desktop sizes, so desktop gets a single grouped "chip" instead — one
-  // consistent-height pill instead of two mismatched elements sitting apart.
   const desktopAuthBlock = user ? (
     <div className="nav-user-chip">
       <div className="nav-user-avatar">{user.email.charAt(0).toUpperCase()}</div>
@@ -110,7 +119,6 @@ const Navbar = () => {
   return (
     <header style={{ backgroundColor: 'var(--color-white)', borderBottom: '1px solid var(--color-border)', position: 'sticky', top: 0, zIndex: 50, boxShadow: 'var(--shadow-sm)' }}>
       <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '70px', gap: '0.75rem' }}>
-        {/* Logo - left padding on mobile makes room for the sidebar's hamburger button */}
         <a
           href="/"
           onClick={(e) => { e.preventDefault(); window.location.href = '/'; }}
@@ -149,19 +157,15 @@ const Navbar = () => {
           )}
         </a>
 
-        {/* Desktop Nav — link cluster (Home/Tools/Blog) and the auth chip are
-            grouped together and pushed to the right, right after the logo.
-            No more space-between gap in the middle. Mobile is untouched. */}
         {!isMobile && (
           <nav style={{ display: 'flex', alignItems: 'center', gap: '3rem', flex: 1, justifyContent: 'flex-end', marginLeft: '2.5rem' }}>
             <div style={{ display: 'flex', gap: '1.75rem', alignItems: 'center' }}>
               <Link to="/" style={navLinkStyle} onMouseOver={linkHover} onMouseOut={linkOut}>Home</Link>
 
+              {/* FIX APPLIED HERE: Removed onMouseEnter and onMouseLeave */}
               <div
                 ref={toolsRef}
                 style={{ position: 'relative' }}
-                onMouseEnter={() => setToolsOpen(true)}
-                onMouseLeave={() => setToolsOpen(false)}
               >
                 <button
                   className="nav-link-btn"
@@ -175,17 +179,40 @@ const Navbar = () => {
 
                 {toolsOpen && (
                   <div className="nav-tools-panel" role="menu">
-                    {desktopTools.map((tool) => (
-                      <Link
-                        key={tool.path}
-                        to={tool.path}
-                        className="nav-tools-item"
-                        role="menuitem"
-                        onClick={() => setToolsOpen(false)}
+                    {toolCategories.map((category) => (
+                      <div
+                        key={category.id}
+                        className="nav-tools-category-wrap"
+                        onMouseEnter={() => setActiveCategory(category.id)}
                       >
-                        <span className={`nav-tools-icon ${tool.colorClass}`}>{tool.icon}</span>
-                        {tool.title}
-                      </Link>
+                        <button
+                          type="button"
+                          className={`nav-tools-category-row ${activeCategory === category.id ? 'is-active' : ''}`}
+                          onClick={() => setActiveCategory((c) => (c === category.id ? null : category.id))}
+                          aria-expanded={activeCategory === category.id}
+                        >
+                          <span className={`nav-tools-icon ${category.colorClass}`}>{category.icon}</span>
+                          <span className="nav-tools-category-label">{category.label}</span>
+                          <FiChevronRight className="nav-tools-category-chevron" />
+                        </button>
+
+                        {activeCategory === category.id && (
+                          <div className="nav-tools-subpanel" role="menu">
+                            {category.tools.map((tool) => (
+                              <Link
+                                key={tool.path}
+                                to={tool.path}
+                                className="nav-tools-item"
+                                role="menuitem"
+                                onClick={() => { setToolsOpen(false); setActiveCategory(null); }}
+                              >
+                                <span className={`nav-tools-icon ${tool.colorClass}`}>{tool.icon}</span>
+                                {tool.title}
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </div>
                 )}
@@ -198,7 +225,6 @@ const Navbar = () => {
           </nav>
         )}
 
-        {/* Mobile: compact auth block + hamburger for nav links */}
         {isMobile && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
             <span style={{
@@ -231,7 +257,6 @@ const Navbar = () => {
         )}
       </div>
 
-      {/* Mobile dropdown panel — unchanged */}
       {isMobile && isOpen && (
         <div style={{
           borderTop: '1px solid var(--color-border)',
@@ -241,24 +266,82 @@ const Navbar = () => {
           gap: '0.25rem',
           backgroundColor: 'var(--color-white)',
         }}>
-          {/* Main nav links */}
-          <Link to="/" style={navLinkStyle} onClick={() => setIsOpen(false)}>Home</Link>
-          <Link to="/blog" style={navLinkStyle} onClick={() => setIsOpen(false)}>Blog</Link>
+          <Link
+            to="/"
+            style={{ ...navLinkStyle, padding: '0.6rem 0' }}
+            onClick={() => setIsOpen(false)}
+          >
+            Home
+          </Link>
 
-          {/* Tools section */}
-          <div style={{ fontSize: '0.7rem', fontWeight: '700', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '0.75rem', marginBottom: '0.25rem', paddingBottom: '0.4rem', borderBottom: '1px solid var(--color-border)' }}>
-            PDF Tools
-          </div>
-          <Link to="/merge-pdf" style={navLinkStyle} onClick={() => setIsOpen(false)}>Merge PDF</Link>
-          <Link to="/compress-pdf" style={navLinkStyle} onClick={() => setIsOpen(false)}>Compress PDF</Link>
-          <Link to="/edit-pdf" style={navLinkStyle} onClick={() => setIsOpen(false)}>Edit PDF</Link>
-          <Link to="/pdf-to-image" style={navLinkStyle} onClick={() => setIsOpen(false)}>PDF to JPG</Link>
-          <Link to="/image-to-pdf" style={navLinkStyle} onClick={() => setIsOpen(false)}>JPG to PDF</Link>
-          <Link to="/word-to-pdf" style={navLinkStyle} onClick={() => setIsOpen(false)}>Word to PDF</Link>
-          <Link to="/pdf-to-word" style={navLinkStyle} onClick={() => setIsOpen(false)}>PDF to Word</Link>
+          {toolCategories.map((category) => (
+            <div key={category.id} style={{ borderTop: '1px solid var(--color-border)', paddingTop: '0.25rem', marginTop: '0.25rem' }}>
+              <button
+                type="button"
+                onClick={() => setMobileCategoryOpen((c) => (c === category.id ? null : category.id))}
+                aria-expanded={mobileCategoryOpen === category.id}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  background: 'none',
+                  border: 'none',
+                  padding: '0.6rem 0',
+                  fontFamily: 'Outfit, sans-serif',
+                  fontWeight: '600',
+                  fontSize: '1rem',
+                  color: 'var(--color-text-main)',
+                  cursor: 'pointer',
+                }}
+              >
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  <span className={`nav-tools-icon ${category.colorClass}`}>{category.icon}</span>
+                  {category.label}
+                </span>
+                <FiChevronDown style={{
+                  transform: mobileCategoryOpen === category.id ? 'rotate(180deg)' : 'none',
+                  transition: 'transform 0.2s',
+                  color: 'var(--color-text-muted)',
+                }} />
+              </button>
 
-          {/* Auth block */}
-          <div style={{ paddingTop: '0.75rem', borderTop: '1px solid var(--color-border)', marginTop: '0.5rem' }}>
+              {mobileCategoryOpen === category.id && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem', paddingLeft: '0.5rem', paddingBottom: '0.5rem' }}>
+                  {category.tools.map((tool) => (
+                    <Link
+                      key={tool.path}
+                      to={tool.path}
+                      onClick={() => setIsOpen(false)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.6rem',
+                        padding: '0.5rem 0.5rem',
+                        borderRadius: 'var(--radius-md)',
+                        textDecoration: 'none',
+                        color: 'var(--color-text-main)',
+                        fontSize: '0.92rem',
+                      }}
+                    >
+                      <span className={`nav-tools-icon ${tool.colorClass}`} style={{ width: '26px', height: '26px', fontSize: '0.85rem' }}>{tool.icon}</span>
+                      {tool.title}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+
+          <Link
+            to="/blog"
+            style={{ ...navLinkStyle, padding: '0.6rem 0', borderTop: '1px solid var(--color-border)', marginTop: '0.25rem' }}
+            onClick={() => setIsOpen(false)}
+          >
+            Blog
+          </Link>
+
+          <div style={{ paddingTop: '0.75rem', borderTop: '1px solid var(--color-border)', marginTop: '0.25rem' }}>
             {authBlock}
           </div>
         </div>
