@@ -238,14 +238,27 @@ const Navbar = () => {
           padding: '1rem 1.25rem 1.5rem',
           display: 'flex',
           flexDirection: 'column',
-          gap: '1rem',
+          gap: '0.25rem',
           backgroundColor: 'var(--color-white)',
         }}>
+          {/* Main nav links */}
           <Link to="/" style={navLinkStyle} onClick={() => setIsOpen(false)}>Home</Link>
-          <Link to="/merge-pdf" style={navLinkStyle} onClick={() => setIsOpen(false)}>Merge PDF</Link>
-          <Link to="/edit-pdf" style={navLinkStyle} onClick={() => setIsOpen(false)}>Edit PDF</Link>
           <Link to="/blog" style={navLinkStyle} onClick={() => setIsOpen(false)}>Blog</Link>
-          <div style={{ paddingTop: '0.5rem', borderTop: '1px solid var(--color-border)' }}>
+
+          {/* Tools section */}
+          <div style={{ fontSize: '0.7rem', fontWeight: '700', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '0.75rem', marginBottom: '0.25rem', paddingBottom: '0.4rem', borderBottom: '1px solid var(--color-border)' }}>
+            PDF Tools
+          </div>
+          <Link to="/merge-pdf" style={navLinkStyle} onClick={() => setIsOpen(false)}>Merge PDF</Link>
+          <Link to="/compress-pdf" style={navLinkStyle} onClick={() => setIsOpen(false)}>Compress PDF</Link>
+          <Link to="/edit-pdf" style={navLinkStyle} onClick={() => setIsOpen(false)}>Edit PDF</Link>
+          <Link to="/pdf-to-image" style={navLinkStyle} onClick={() => setIsOpen(false)}>PDF to JPG</Link>
+          <Link to="/image-to-pdf" style={navLinkStyle} onClick={() => setIsOpen(false)}>JPG to PDF</Link>
+          <Link to="/word-to-pdf" style={navLinkStyle} onClick={() => setIsOpen(false)}>Word to PDF</Link>
+          <Link to="/pdf-to-word" style={navLinkStyle} onClick={() => setIsOpen(false)}>PDF to Word</Link>
+
+          {/* Auth block */}
+          <div style={{ paddingTop: '0.75rem', borderTop: '1px solid var(--color-border)', marginTop: '0.5rem' }}>
             {authBlock}
           </div>
         </div>
