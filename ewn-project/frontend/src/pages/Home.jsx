@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import AdBanner from '../components/ads/AdBanner';
 import SEO from '../components/SEO';
 import { useAuth } from '../context/AuthContext';
-import { FiLayers, FiMinimize2, FiEdit3, FiImage, FiFileText, FiUnlock, FiZap } from 'react-icons/fi';
+import { FiLayers, FiMinimize2, FiEdit3, FiImage, FiFileText, FiUnlock, FiZap, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
+// Single flat list — the source of truth for every tool card in the
+// scrolling row below. Adding a new tool (PDF or otherwise, now or later)
+// is just pushing another object in here; nothing else needs to change.
 const tools = [
   {
     id: 'merge-pdf',
@@ -64,6 +67,64 @@ const tools = [
   }
 ];
 
+const ToolCard = ({ tool }) => (
+  <Link to={tool.path} className="tool-card">
+    <div className={`tool-icon-wrapper ${tool.colorClass}`}>
+      {tool.icon}
+    </div>
+    <h3 className="tool-title">{tool.title}</h3>
+    <p className="tool-desc">{tool.description}</p>
+  </Link>
+);
+
+// One section, one scrollable row — same component tree on phone and
+// laptop. Mobile gets native swipe with snap; desktop additionally gets
+// hover-revealed arrow buttons that nudge the same scroll container.
+const ToolSection = ({ title, sectionTools }) => {
+  const rowRef = useRef(null);
+
+  const scrollByAmount = (direction) => {
+    const row = rowRef.current;
+    if (!row) return;
+    const cardWidth = row.firstChild ? row.firstChild.offsetWidth + 24 : 280;
+    row.scrollBy({ left: direction * cardWidth * 2, behavior: 'smooth' });
+  };
+
+  return (
+    <section className="tool-section">
+      <div className="tool-section-header">
+        <h2 className="tool-section-title">{title}</h2>
+        <div className="tool-section-arrows">
+          <button
+            type="button"
+            className="tool-scroll-arrow"
+            aria-label="Scroll left"
+            onClick={() => scrollByAmount(-1)}
+          >
+            <FiChevronLeft />
+          </button>
+          <button
+            type="button"
+            className="tool-scroll-arrow"
+            aria-label="Scroll right"
+            onClick={() => scrollByAmount(1)}
+          >
+            <FiChevronRight />
+          </button>
+        </div>
+      </div>
+
+      <div className="tool-scroll-row" ref={rowRef}>
+        {sectionTools.map((tool) => (
+          <div className="tool-scroll-item" key={tool.id}>
+            <ToolCard tool={tool} />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+};
+
 const Home = () => {
   const { user, remainingUses, setShowLoginModal } = useAuth();
 
@@ -118,18 +179,11 @@ const Home = () => {
 
       <AdBanner position="home-top" />
 
-      <div className="tool-grid">
-        {tools.map((tool) => (
-          <Link to={tool.path} key={tool.id} className="tool-card">
-            <div className={`tool-icon-wrapper ${tool.colorClass}`}>
-              {tool.icon}
-            </div>
-            <h3 className="tool-title">{tool.title}</h3>
-            <p className="tool-desc">{tool.description}</p>
-          </Link>
-        ))}
-      </div>
-      
+      {/* Single unified row today — when non-PDF tools are added later,
+          this becomes ToolSection title="PDF Tools" + another ToolSection
+          right below it, no restructuring needed. */}
+      <ToolSection title="PDF Tools" sectionTools={tools} />
+
       <AdBanner position="home-bottom" />
     </div>
   );

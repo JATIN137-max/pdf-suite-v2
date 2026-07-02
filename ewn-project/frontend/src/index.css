@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fraunces:ital,wght@1,500;1,600&display=swap');
 :root {
   /* Color Palette */
   --color-white: #ffffff;
@@ -139,7 +139,7 @@ h1, h2, h3, h4, h5, h6 {
   transform: translateY(-4px);
 }
 
-/* Tool Grid */
+/* Tool Grid — still used by other pages; Home now uses the scroll row below */
 .tool-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -314,4 +314,288 @@ h1, h2, h3, h4, h5, h6 {
   max-width: 100%;
   height: auto;
   border-radius: 4px;
+}
+
+/* ==========================================================================
+   Desktop Navbar — Tools mega-menu + gradient tagline
+   Scoped to ≥769px on purpose: mobile keeps its own hamburger/stacked menu
+   and never sees these rules, so nothing here can affect the mobile UI.
+   ========================================================================== */
+@media (min-width: 769px) {
+  .nav-link-btn {
+    background: none;
+    border: none;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--color-text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    cursor: pointer;
+    padding: 0.4rem 0;
+    transition: color 0.2s;
+  }
+
+  .nav-link-btn:hover,
+  .nav-link-btn[aria-expanded="true"] {
+    color: var(--color-blue);
+  }
+
+  .nav-tools-panel {
+    position: absolute;
+    top: calc(100% + 0.75rem);
+    left: 0;
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-hover);
+    padding: 0.75rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(170px, 1fr));
+    gap: 0.35rem;
+    z-index: 60;
+    animation: navPanelIn 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .nav-tools-panel::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 24px;
+    width: 12px;
+    height: 12px;
+    background: var(--color-white);
+    border-left: 1px solid var(--color-border);
+    border-top: 1px solid var(--color-border);
+    transform: rotate(45deg);
+  }
+
+  .nav-tools-item {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.55rem 0.6rem;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--color-text-main);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.15s;
+  }
+
+  .nav-tools-item:hover {
+    background-color: var(--color-bg-light);
+  }
+
+  .nav-tools-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  /* Desktop auth chip — replaces the crowded "Hi, name" + outline-button
+     pairing (still used on mobile) with one grouped, consistent-height pill. */
+  .nav-user-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.35rem 0.5rem 0.35rem 0.35rem;
+    background-color: var(--color-bg-light);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    flex-shrink: 0;
+  }
+
+  .nav-user-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-blue) 0%, var(--color-blue-hover) 100%);
+    color: var(--color-white);
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .nav-user-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-main);
+    max-width: 130px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .nav-user-divider {
+    width: 1px;
+    height: 18px;
+    background-color: var(--color-border);
+    flex-shrink: 0;
+  }
+
+  .nav-user-logout {
+    background: none;
+    border: none;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 0.35rem 0.6rem;
+    border-radius: var(--radius-md);
+    transition: background-color 0.15s, color 0.15s;
+  }
+
+  .nav-user-logout:hover {
+    background-color: var(--color-red-light);
+    color: var(--color-red);
+  }
+
+  .nav-guest-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  .nav-guest-badge {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    color: var(--color-white);
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+@keyframes navPanelIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   Home page — unified "PDF Tools" scroll row
+   Same markup and same rules run on mobile and desktop: one horizontally
+   scrollable row with snap points. Desktop additionally gets hover-revealed
+   arrow buttons; touch devices just swipe. Cards keep using .tool-card /
+   .tool-icon-wrapper etc. from above, just wrapped in a scroll item.
+   ========================================================================== */
+.tool-section {
+  margin-top: 2.5rem;
+}
+
+.tool-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.tool-section-title {
+  font-size: 1.35rem;
+  position: relative;
+  padding-left: 0.9rem;
+}
+
+.tool-section-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  bottom: 0.15em;
+  width: 4px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--color-blue) 0%, var(--color-green) 50%, var(--color-red) 100%);
+}
+
+.tool-section-arrows {
+  display: none; /* shown on desktop only, see media query below */
+  gap: 0.5rem;
+}
+
+.tool-scroll-arrow {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-white);
+  color: var(--color-text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-all);
+}
+
+.tool-scroll-arrow:hover {
+  background-color: var(--color-blue);
+  border-color: var(--color-blue);
+  color: var(--color-white);
+  transform: translateY(-2px);
+}
+
+.tool-scroll-row {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  padding: 0.5rem 0.25rem 1.25rem;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+.tool-scroll-row::-webkit-scrollbar {
+  height: 6px;
+}
+
+.tool-scroll-row::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: 999px;
+}
+
+.tool-scroll-item {
+  flex: 0 0 auto;
+  width: 220px;
+  scroll-snap-align: start;
+}
+
+.tool-scroll-item .tool-card {
+  height: 100%;
+  padding: 2rem 1.25rem;
+}
+
+.tool-scroll-item .tool-title {
+  font-size: 1.05rem;
+}
+
+.tool-scroll-item .tool-desc {
+  font-size: 0.85rem;
+}
+
+/* Desktop: reveal arrow controls, widen cards slightly since there's more
+   room per card and hover states matter more than on touch. */
+@media (min-width: 769px) {
+  .tool-section-arrows {
+    display: flex;
+  }
+
+  .tool-scroll-item {
+    width: 250px;
+  }
 }
