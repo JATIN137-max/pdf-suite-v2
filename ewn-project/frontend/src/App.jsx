@@ -5,7 +5,6 @@ import Footer from './components/layout/Footer';
 import ScrollToTop from './components/layout/ScrollToTop';
 import Sidebar from './components/layout/Sidebar';
 import LoginModal from './components/auth/LoginModal';
-import { ThemeProvider } from './context/ThemeContext';
 
 // Home is small and is the most likely first paint, so keep it eager.
 import Home from './pages/Home';
@@ -35,49 +34,47 @@ const PageLoader = () => (
 
 function App() {
   return (
-    <ThemeProvider>
-      <Router>
-        <ScrollToTop />
-        <LoginModal />
+    <Router>
+      <ScrollToTop />
+      <LoginModal />
 
-        {/* Full page layout */}
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      {/* Full page layout */}
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
 
-          {/* Sticky top navbar */}
-          <Navbar />
+        {/* Sticky top navbar */}
+        <Navbar />
 
-          {/* Body: sidebar + main content side by side */}
-          <div style={{ display: 'flex', flex: 1 }}>
-            <Sidebar />
+        {/* Body: sidebar + main content side by side */}
+        <div style={{ display: 'flex', flex: 1 }}>
+          <Sidebar />
 
-            {/* Main content area grows to fill remaining space */}
-            <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-              <main style={{ flex: 1, padding: '2rem 1.5rem 4rem', maxWidth: '1100px', width: '100%', margin: '0 auto' }}>
-                <Suspense fallback={<PageLoader />}>
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/merge-pdf" element={<MergePdf />} />
-                    <Route path="/compress-pdf" element={<CompressPdf />} />
-                    <Route path="/edit-pdf" element={<EditPdf />} />
-                    <Route path="/pdf-to-image" element={<PdfToImage />} />
-                    <Route path="/image-to-pdf" element={<ImageToPdf />} />
-                    <Route path="/word-to-pdf" element={<WordToPdf />} />
-                    <Route path="/pdf-to-word" element={<PdfToWord />} />
-                    <Route path="/solvent-ai" element={<SolventAI />} />
-                    <Route path="/blog" element={<BlogList />} />
-                    <Route path="/blog/:slug" element={<BlogPost />} />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path="/terms" element={<TermsOfService />} />
-                    <Route path="/privacy" element={<PrivacyPolicy />} />
-                  </Routes>
-                </Suspense>
-              </main>
-              <Footer />
-            </div>
+          {/* Main content area grows to fill remaining space */}
+          <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+            <main style={{ flex: 1, padding: '2rem 1.5rem 4rem', maxWidth: '1100px', width: '100%', margin: '0 auto' }}>
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/merge-pdf" element={<MergePdf />} />
+                  <Route path="/compress-pdf" element={<CompressPdf />} />
+                  <Route path="/edit-pdf" element={<EditPdf />} />
+                  <Route path="/pdf-to-image" element={<PdfToImage />} />
+                  <Route path="/image-to-pdf" element={<ImageToPdf />} />
+                  <Route path="/word-to-pdf" element={<WordToPdf />} />
+                  <Route path="/pdf-to-word" element={<PdfToWord />} />
+                  <Route path="/solvent-ai" element={<SolventAI />} />
+                  <Route path="/blog" element={<BlogList />} />
+                  <Route path="/blog/:slug" element={<BlogPost />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/terms" element={<TermsOfService />} />
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
+                </Routes>
+              </Suspense>
+            </main>
+            <Footer />
           </div>
         </div>
-      </Router>
-    </ThemeProvider>
+      </div>
+    </Router>
   );
 }
 
