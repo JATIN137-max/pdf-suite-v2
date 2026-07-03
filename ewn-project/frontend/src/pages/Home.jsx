@@ -161,6 +161,7 @@ const Home = () => {
         {!user && (
           <div
             className="free-login-callout"
+            style={{ marginTop: '1.5rem' }}
             onClick={() => setShowLoginModal(true)}
           >
             <FiUnlock className="free-login-icon-unlock" />
