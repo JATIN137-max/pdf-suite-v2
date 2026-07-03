@@ -17,9 +17,11 @@ const SolventAI = () => {
   const bottomRef = useRef(null);
 
   useEffect(() => {
+  const lastMessage = messages[messages.length - 1];
+  if (lastMessage && lastMessage.role === 'user') {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, loading]);
-
+  }
+}, [messages]);
   const sendMessage = async (e) => {
     e.preventDefault();
     const text = input.trim();
