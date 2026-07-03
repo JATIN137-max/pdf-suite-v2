@@ -10,31 +10,31 @@ import {
 // beneath "All Tools". Adding a future category (e.g. Image Tools) is just
 // pushing another object into this array; the accordion logic below
 // doesn't change.
+//
+// `color` / `lightBg` are CSS variable references (not hardcoded hex) so
+// active and hover states automatically pick up the right shade in both
+// light and dark mode.
 const toolCategories = [
   {
     id: 'pdf',
     label: 'PDF Tools',
     icon: <FiFileText />,
-    color: '#2563eb',
+    color: 'var(--color-blue)',
+    lightBg: 'var(--color-blue-light)',
     tools: [
-      { label: 'Merge PDF', path: '/merge-pdf', icon: <FiLayers />, color: '#2563eb' },
-      { label: 'Compress PDF', path: '/compress-pdf', icon: <FiMinimize2 />, color: '#10b981' },
-      { label: 'Edit PDF', path: '/edit-pdf', icon: <FiEdit3 />, color: '#ef4444' },
-      { label: 'PDF to JPG', path: '/pdf-to-image', icon: <FiImage />, color: '#2563eb' },
-      { label: 'JPG to PDF', path: '/image-to-pdf', icon: <FiFileText />, color: '#10b981' },
-      { label: 'Word to PDF', path: '/word-to-pdf', icon: <FiFileText />, color: '#2563eb' },
-      { label: 'PDF to Word', path: '/pdf-to-word', icon: <FiFileText />, color: '#ef4444' },
+      { label: 'Merge PDF', path: '/merge-pdf', icon: <FiLayers />, color: 'var(--color-blue)', lightBg: 'var(--color-blue-light)' },
+      { label: 'Compress PDF', path: '/compress-pdf', icon: <FiMinimize2 />, color: 'var(--color-green)', lightBg: 'var(--color-green-light)' },
+      { label: 'Edit PDF', path: '/edit-pdf', icon: <FiEdit3 />, color: 'var(--color-red)', lightBg: 'var(--color-red-light)' },
+      { label: 'PDF to JPG', path: '/pdf-to-image', icon: <FiImage />, color: 'var(--color-blue)', lightBg: 'var(--color-blue-light)' },
+      { label: 'JPG to PDF', path: '/image-to-pdf', icon: <FiFileText />, color: 'var(--color-green)', lightBg: 'var(--color-green-light)' },
+      { label: 'Word to PDF', path: '/word-to-pdf', icon: <FiFileText />, color: 'var(--color-blue)', lightBg: 'var(--color-blue-light)' },
+      { label: 'PDF to Word', path: '/pdf-to-word', icon: <FiFileText />, color: 'var(--color-red)', lightBg: 'var(--color-red-light)' },
     ],
   },
 ];
 
 // Match this to the CSS breakpoint below
 const MOBILE_BREAKPOINT = 768;
-
-const colorBg = (color) => (
-  color === '#2563eb' ? 'var(--color-blue-light)' :
-  color === '#10b981' ? '#f0fdf4' : 'var(--color-red-light)'
-);
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -144,7 +144,7 @@ const Sidebar = () => {
         boxShadow: isMobile ? '4px 0 16px rgba(0,0,0,0.15)' : '2px 0 8px rgba(0,0,0,0.04)',
         display: 'flex',
         flexDirection: 'column',
-        transition: isMobile ? 'left 0.25s cubic-bezier(0.4,0,0.2,1)' : 'width 0.25s cubic-bezier(0.4,0,0.2,1)',
+        transition: isMobile ? 'left 0.25s cubic-bezier(0.4,0,0.2,1)' : 'width 0.25s cubic-bezier(0.4,0,0.2,1), background-color 0.4s ease, border-color 0.4s ease',
         zIndex: 40,
         overflowX: 'hidden',
         overflowY: 'auto',
@@ -185,9 +185,9 @@ const Sidebar = () => {
               padding: effectiveCollapsed ? '0.8rem' : '0.75rem 1rem',
               justifyContent: effectiveCollapsed ? 'center' : 'flex-start',
               textDecoration: 'none',
-              color: location.pathname === '/' ? '#2563eb' : 'var(--color-text-muted)',
+              color: location.pathname === '/' ? 'var(--color-blue)' : 'var(--color-text-muted)',
               backgroundColor: location.pathname === '/' ? 'var(--color-blue-light)' : 'transparent',
-              borderLeft: location.pathname === '/' ? '3px solid #2563eb' : '3px solid transparent',
+              borderLeft: location.pathname === '/' ? '3px solid var(--color-blue)' : '3px solid transparent',
               fontWeight: location.pathname === '/' ? '600' : '400',
               fontSize: '0.875rem',
               transition: 'all 0.15s ease',
@@ -197,7 +197,7 @@ const Sidebar = () => {
             onMouseEnter={e => {
               if (location.pathname !== '/') {
                 e.currentTarget.style.backgroundColor = 'var(--color-bg-light)';
-                e.currentTarget.style.color = '#2563eb';
+                e.currentTarget.style.color = 'var(--color-blue)';
               }
             }}
             onMouseLeave={e => {
@@ -237,7 +237,7 @@ const Sidebar = () => {
                     border: 'none',
                     cursor: 'pointer',
                     color: isCategoryActive ? category.color : 'var(--color-text-muted)',
-                    backgroundColor: isCategoryActive ? colorBg(category.color) : 'transparent',
+                    backgroundColor: isCategoryActive ? category.lightBg : 'transparent',
                     borderLeft: isCategoryActive ? `3px solid ${category.color}` : '3px solid transparent',
                     fontWeight: isCategoryActive ? '600' : '400',
                     fontSize: '0.875rem',
@@ -292,7 +292,7 @@ const Sidebar = () => {
                             padding: '0.6rem 1rem 0.6rem 2.1rem',
                             textDecoration: 'none',
                             color: isActive ? tool.color : 'var(--color-text-muted)',
-                            backgroundColor: isActive ? colorBg(tool.color) : 'transparent',
+                            backgroundColor: isActive ? tool.lightBg : 'transparent',
                             borderLeft: isActive ? `3px solid ${tool.color}` : '3px solid transparent',
                             fontWeight: isActive ? '600' : '400',
                             fontSize: '0.82rem',

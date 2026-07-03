@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { FiMenu, FiX, FiChevronDown, FiChevronRight, FiLayers, FiMinimize2, FiEdit3, FiImage, FiFileText } from 'react-icons/fi';
+import ThemeToggle from './ThemeToggle';
 
 const MOBILE_BREAKPOINT = 768;
 
@@ -221,6 +222,8 @@ const Navbar = () => {
               <Link to="/blog" style={navLinkStyle} onMouseOver={linkHover} onMouseOut={linkOut}>Blog</Link>
             </div>
 
+            <ThemeToggle />
+
             {desktopAuthBlock}
           </nav>
         )}
@@ -237,6 +240,7 @@ const Navbar = () => {
             }}>
               {remainingUses} left
             </span>
+            <ThemeToggle style={{ width: '34px', height: '34px' }} />
             <button
               onClick={() => setIsOpen(!isOpen)}
               aria-label="Toggle menu"

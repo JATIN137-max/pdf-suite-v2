@@ -142,27 +142,15 @@ const Home = () => {
           EWN provides a comprehensive suite of free, secure, and fast tools. Start by selecting a PDF tool below. More tools coming soon!
         </p>
 
-        {/* Free login callout — only shown to guests */}
+        {/* Free login callout — only shown to guests. Styling now lives in
+            .free-login-callout (index.css) instead of inline styles, so
+            dark mode can give it its own tinted/glowing gradient. */}
         {!user && (
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.6rem',
-            marginTop: '1.25rem',
-            padding: '0.55rem 1.25rem',
-            borderRadius: '999px',
-            background: 'linear-gradient(135deg, #e8f0fe 0%, #fce8e6 100%)',
-            border: '1px solid rgba(26, 115, 232, 0.2)',
-            fontSize: '0.9rem',
-            color: 'var(--color-text-main)',
-            cursor: 'pointer',
-            transition: 'box-shadow 0.2s, transform 0.2s',
-          }}
-          onClick={() => setShowLoginModal(true)}
-          onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(26,115,232,0.15)'; }}
-          onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
+          <div
+            className="free-login-callout"
+            onClick={() => setShowLoginModal(true)}
           >
-            <FiUnlock style={{ color: 'var(--color-blue)', fontSize: '1rem', flexShrink: 0 }} />
+            <FiUnlock className="free-login-icon-unlock" />
             <span>
               <strong style={{ color: 'var(--color-blue)' }}>Free login</strong>
               {' '}for unlimited access
@@ -172,7 +160,7 @@ const Home = () => {
                 </span>
               )}
             </span>
-            <FiZap style={{ color: 'var(--color-red)', fontSize: '0.9rem', flexShrink: 0 }} />
+            <FiZap className="free-login-icon-zap" />
           </div>
         )}
       </div>
