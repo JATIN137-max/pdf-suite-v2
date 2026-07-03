@@ -20,6 +20,7 @@ const PdfToImage = lazy(() => import('./pages/pdf/PdfToImage'));
 const ImageToPdf = lazy(() => import('./pages/pdf/ImageToPdf'));
 const WordToPdf = lazy(() => import('./pages/pdf/WordToPdf'));
 const PdfToWord = lazy(() => import('./pages/pdf/PdfToWord'));
+const SolventAI = lazy(() => import('./pages/ai/SolventAI'));
 const BlogList = lazy(() => import('./pages/blogs/BlogList'));
 const BlogPost = lazy(() => import('./pages/blogs/BlogPost'));
 const Contact = lazy(() => import('./pages/legal/Contact'));
@@ -62,6 +63,7 @@ function App() {
                     <Route path="/image-to-pdf" element={<ImageToPdf />} />
                     <Route path="/word-to-pdf" element={<WordToPdf />} />
                     <Route path="/pdf-to-word" element={<PdfToWord />} />
+                    <Route path="/solvent-ai" element={<SolventAI />} />
                     <Route path="/blog" element={<BlogList />} />
                     <Route path="/blog/:slug" element={<BlogPost />} />
                     <Route path="/contact" element={<Contact />} />

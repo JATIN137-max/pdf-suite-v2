@@ -20,6 +20,18 @@ const userSchema = new mongoose.Schema({
   subscriptionExpiry: {
     type: Date,
     default: null
+  },
+  // --- Solvent AI daily usage tracking ---
+  // aiUsageDate is a 'YYYY-MM-DD' string. Whenever it doesn't match
+  // today's date, aiController resets aiUsageCount back to 0 - this is
+  // how the daily cap resets at midnight without a cron job.
+  aiUsageCount: {
+    type: Number,
+    default: 0
+  },
+  aiUsageDate: {
+    type: String,
+    default: null
   }
 }, { timestamps: true });
 

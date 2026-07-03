@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 import AdBanner from '../components/ads/AdBanner';
 import SEO from '../components/SEO';
 import { useAuth } from '../context/AuthContext';
-import { FiLayers, FiMinimize2, FiEdit3, FiImage, FiFileText, FiUnlock, FiZap, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiLayers, FiMinimize2, FiEdit3, FiImage, FiFileText, FiCpu, FiUnlock, FiZap, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
-// Single flat list — the source of truth for every tool card in the
-// scrolling row below. Adding a new tool (PDF or otherwise, now or later)
-// is just pushing another object in here; nothing else needs to change.
+// Single flat list — the source of truth for every PDF tool card in the
+// scrolling row below. Adding a new PDF tool is just pushing another
+// object in here; nothing else needs to change.
 const tools = [
   {
     id: 'merge-pdf',
@@ -64,6 +64,19 @@ const tools = [
     icon: <FiFileText />,
     path: '/pdf-to-word',
     colorClass: 'icon-red'
+  }
+];
+
+// AI tools row — separate list, same card component. Just one entry today;
+// adding another AI tool later is a one-line push into this array.
+const aiTools = [
+  {
+    id: 'solvent-ai',
+    title: 'Solvent AI',
+    description: 'Chat with a free AI assistant that helps solve problems and answer questions.',
+    icon: <FiCpu />,
+    path: '/solvent-ai',
+    colorClass: 'icon-green'
   }
 ];
 
@@ -167,10 +180,10 @@ const Home = () => {
 
       <AdBanner position="home-top" />
 
-      {/* Single unified row today — when non-PDF tools are added later,
-          this becomes ToolSection title="PDF Tools" + another ToolSection
-          right below it, no restructuring needed. */}
+      {/* PDF Tools row, then AI Tools row right below it — same
+          ToolSection component, different data, no restructuring needed. */}
       <ToolSection title="PDF Tools" sectionTools={tools} />
+      <ToolSection title="AI Tools" sectionTools={aiTools} />
 
       <AdBanner position="home-bottom" />
     </div>

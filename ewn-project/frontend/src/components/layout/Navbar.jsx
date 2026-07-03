@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FiMenu, FiX, FiChevronDown, FiChevronRight, FiLayers, FiMinimize2, FiEdit3, FiImage, FiFileText } from 'react-icons/fi';
+import { FiMenu, FiX, FiChevronDown, FiChevronRight, FiLayers, FiMinimize2, FiEdit3, FiImage, FiFileText, FiCpu } from 'react-icons/fi';
 import ThemeToggle from './ThemeToggle';
 
 const MOBILE_BREAKPOINT = 768;
@@ -20,6 +20,15 @@ const toolCategories = [
       { title: 'JPG to PDF', path: '/image-to-pdf', icon: <FiFileText />, colorClass: 'icon-green' },
       { title: 'Word to PDF', path: '/word-to-pdf', icon: <FiFileText />, colorClass: 'icon-blue' },
       { title: 'PDF to Word', path: '/pdf-to-word', icon: <FiFileText />, colorClass: 'icon-red' },
+    ],
+  },
+  {
+    id: 'ai',
+    label: 'AI Tools',
+    icon: <FiCpu />,
+    colorClass: 'icon-green',
+    tools: [
+      { title: 'Solvent AI', path: '/solvent-ai', icon: <FiCpu />, colorClass: 'icon-green' },
     ],
   },
 ];
@@ -107,7 +116,7 @@ const Navbar = () => {
     <div className="nav-guest-chip">
       <span
         className="nav-guest-badge"
-        style={{ backgroundColor: remainingUses <= 3 ? 'var(--color-red)' : 'var(--color-blue)' }}
+        style={{ backgroundColor: remainingUses <= 3 ? 'var(--color-red-light)' : 'var(--color-bg-light)', color: remainingUses <= 3 ? 'var(--color-red)' : 'var(--color-text-main)' }}
       >
         {remainingUses} free {remainingUses === 1 ? 'use' : 'uses'} left
       </span>

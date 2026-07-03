@@ -38,6 +38,8 @@ let ads = [
 const authController = require('./controllers/authController');
 const blogController = require('./controllers/blogController');
 const seedController = require('./controllers/seedController');
+const aiController = require('./controllers/aiController');
+const requireAuth = require('./middleware/auth');
 
 // Routes
 app.get('/api/ads', (req, res) => {
@@ -53,6 +55,10 @@ app.post('/api/auth/upgrade', authController.upgrade);
 app.get('/api/blog', blogController.listPosts);
 app.get('/api/blog/:slug', blogController.getPostBySlug);
 app.get('/api/seed-blog', seedController.seedBlog);
+
+// Solvent AI Route (logged-in users only - requireAuth checks the JWT
+// before aiController runs, and aiController enforces the daily cap)
+app.post('/api/ai/solvent-chat', requireAuth, aiController.chat);
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, { 

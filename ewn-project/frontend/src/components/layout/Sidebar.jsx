@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
-  FiLayers, FiMinimize2, FiEdit3, FiImage, FiFileText,
+  FiLayers, FiMinimize2, FiEdit3, FiImage, FiFileText, FiCpu,
   FiChevronLeft, FiChevronRight, FiChevronDown, FiGrid, FiMenu, FiX
 } from 'react-icons/fi';
 
-// Every tool lives inside a category instead of one flat list. Today
-// there's only one — "PDF Tools" — rendered as an expand/collapse section
-// beneath "All Tools". Adding a future category (e.g. Image Tools) is just
-// pushing another object into this array; the accordion logic below
-// doesn't change.
+// Every tool lives inside a category instead of one flat list. "PDF Tools"
+// and "AI Tools" are both rendered as expand/collapse sections beneath
+// "All Tools". Adding a future category is just pushing another object
+// into this array; the accordion logic below doesn't change.
 //
 // `color` / `lightBg` are CSS variable references (not hardcoded hex) so
 // active and hover states automatically pick up the right shade in both
@@ -31,6 +30,16 @@ const toolCategories = [
       { label: 'PDF to Word', path: '/pdf-to-word', icon: <FiFileText />, color: 'var(--color-red)', lightBg: 'var(--color-red-light)' },
     ],
   },
+  {
+    id: 'ai',
+    label: 'AI Tools',
+    icon: <FiCpu />,
+    color: 'var(--color-green)',
+    lightBg: 'var(--color-green-light)',
+    tools: [
+      { label: 'Solvent AI', path: '/solvent-ai', icon: <FiCpu />, color: 'var(--color-green)', lightBg: 'var(--color-green-light)' },
+    ],
+  },
 ];
 
 // Match this to the CSS breakpoint below
@@ -46,7 +55,7 @@ const Sidebar = () => {
 
   // Which category's tool list is expanded. Starts open if the current
   // page is already one of that category's tools, so a direct link to
-  // e.g. /merge-pdf lands with "PDF Tools" pre-expanded.
+  // e.g. /merge-pdf or /solvent-ai lands with its category pre-expanded.
   const [openCategory, setOpenCategory] = useState(() => {
     const match = toolCategories.find((cat) => cat.tools.some((t) => t.path === location.pathname));
     return match ? match.id : null;
@@ -213,8 +222,9 @@ const Sidebar = () => {
             {!effectiveCollapsed && <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>All Tools</span>}
           </NavLink>
 
-          {/* Tool categories — "PDF Tools" today, more can be added later.
-              Each is a click-to-expand section rather than flat links. */}
+          {/* Tool categories — "PDF Tools" and "AI Tools" today, more can
+              be added later. Each is a click-to-expand section rather
+              than flat links. */}
           {toolCategories.map((category) => {
             const isCategoryActive = category.tools.some((t) => t.path === location.pathname);
             const isOpen = openCategory === category.id;
