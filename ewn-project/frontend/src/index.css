@@ -886,3 +886,9 @@ h1, h2, h3, h4, h5, h6 {
   flex-shrink: 0;
   padding: 0.75rem 1.1rem;
 }
+.solvent-chat-messages {
+  max-height: 60vh;       /* Keeps the box a fixed height on laptops */
+  overflow-y: auto;       /* Makes just the messages scroll, not the whole website */
+  padding-right: 8px;
+  -webkit-overflow-scrolling: touch; /* Butter-smooth scrolling on iPhones */
+}

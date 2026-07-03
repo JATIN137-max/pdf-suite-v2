@@ -16,12 +16,32 @@ const SolventAI = () => {
   const [error, setError] = useState('');
   const bottomRef = useRef(null);
 
-  useEffect(() => {
+  // Replace your old useEffect with this smart container-scroll lock:
+useEffect(() => {
+  const chatContainer = document.querySelector('.solvent-chat-messages');
+  if (!chatContainer) return;
+
   const lastMessage = messages[messages.length - 1];
+  
+  // 1. If YOU sent a message, smoothly bring just the chat container down
   if (lastMessage && lastMessage.role === 'user') {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    chatContainer.scrollTo({
+      top: chatContainer.scrollHeight,
+      behavior: 'smooth'
+    });
+    return;
   }
-}, [messages]);
+
+  // 2. When AI responds: Only scroll if you were ALREADY at the bottom.
+  // If you scrolled up to read, this leaves you completely alone!
+  const isAtBottom = chatContainer.scrollHeight - chatContainer.scrollTop <= chatContainer.clientHeight + 150;
+  if (isAtBottom && loading) {
+    chatContainer.scrollTo({
+      top: chatContainer.scrollHeight,
+      behavior: 'smooth'
+    });
+  }
+}, [messages, loading]);
   const sendMessage = async (e) => {
     e.preventDefault();
     const text = input.trim();
