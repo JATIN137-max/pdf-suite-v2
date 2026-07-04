@@ -12,7 +12,8 @@ const PORT = process.env.PORT || 5000;
 const allowedOrigins = [
     'https://nextools-verse.vercel.app',
     'https://pdf-suite-v2.vercel.app',
-    'http://localhost:5173'
+    'http://localhost:5173',
+    'http://localhost:5174'
 ];
 app.use(cors({
     origin: function (origin, callback) {

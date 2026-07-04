@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   const MAX_FREE_ATTEMPTS = 10;
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  const API_BASE = import.meta.env.VITE_API_URL || 'https://pdf-suite-v2.onrender.com';
 
   useEffect(() => {
     // Check if user is logged in
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post(`${API_URL}/auth/login`, { email, password });
+      const response = await axios.post(`${API_BASE}/api/auth/login`, { email, password });
       setUser(response.data.user);
       localStorage.setItem('ewn_token', response.data.token);
       localStorage.setItem('ewn_user', JSON.stringify(response.data.user));
@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (email, password) => {
     try {
-      const response = await axios.post(`${API_URL}/auth/register`, { email, password });
+      const response = await axios.post(`${API_BASE}/api/auth/register`, { email, password });
       setUser(response.data.user);
       localStorage.setItem('ewn_token', response.data.token);
       localStorage.setItem('ewn_user', JSON.stringify(response.data.user));

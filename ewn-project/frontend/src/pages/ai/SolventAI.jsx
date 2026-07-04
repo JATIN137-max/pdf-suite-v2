@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import SEO from '../../components/SEO';
 import { FiSend, FiCpu, FiUser, FiLock } from 'react-icons/fi';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'https://pdf-suite-v2.onrender.com';
 
 const SolventAI = () => {
   const { user, setShowLoginModal } = useAuth();
@@ -56,10 +56,10 @@ useEffect(() => {
     try {
       const token = localStorage.getItem('ewn_token');
       const res = await axios.post(
-        `${API_URL}/ai/solvent-chat`,
-        { message: text, history: nextMessages },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+  `${API_BASE}/api/ai/solvent-chat`,
+  { message: text, history: nextMessages },
+  { headers: { Authorization: `Bearer ${token}` } }
+);
       setMessages((prev) => [...prev, { role: 'assistant', text: res.data.reply }]);
       setLimitInfo({ remaining: res.data.remaining, limit: res.data.limit });
     } catch (err) {
