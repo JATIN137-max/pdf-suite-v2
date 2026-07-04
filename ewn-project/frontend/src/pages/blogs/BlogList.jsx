@@ -21,7 +21,7 @@ const BlogList = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await axios.get(`${API_BASE}/blog`);
+        const res = await axios.get(`${API_BASE}/api/blog`);
         setPosts(res.data);
       } catch (err) {
         console.error('Failed to load blog posts:', err);
