@@ -1,3 +1,25 @@
+const multer = require('multer');
+const rateLimit = require('express-rate-limit');
+const pdfController = require('./controllers/pdfController');
+const optionalAuth = require('./middleware/optionalAuth');
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 15 * 1024 * 1024 }, // 15MB
+});
+
+// Anonymous users: 10/day, keyed by IP.
+// Logged-in users: 30/day, keyed by their user id instead of IP - so it
+// follows the person (not the network) and isn't shared with roommates/
+// coworkers on the same IP.
+const pdfLimiter = rateLimit({
+  windowMs: 24 * 60 * 60 * 1000,
+  max: (req) => (req.userId ? 30 : 10),
+  keyGenerator: (req) => (req.userId ? `user:${req.userId}` : req.ip),
+  message: { message: "You've reached today's conversion limit. Please try again tomorrow." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -51,6 +73,8 @@ app.get('/api/ads', (req, res) => {
 app.post('/api/auth/register', authController.register);
 app.post('/api/auth/login', authController.login);
 app.post('/api/auth/upgrade', authController.upgrade);
+app.post('/api/pdf/word-to-pdf', optionalAuth, pdfLimiter, upload.single('file'), pdfController.wordToPdf);
+app.post('/api/pdf/pdf-to-word', optionalAuth, pdfLimiter, upload.single('file'), pdfController.pdfToWord);
 
 // Blog Routes
 app.get('/api/blog', blogController.listPosts);

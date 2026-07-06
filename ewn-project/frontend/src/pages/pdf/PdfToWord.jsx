@@ -1,82 +1,75 @@
 import React, { useState } from 'react';
-import { pdfjs } from 'react-pdf';
-import { Document, Packer, Paragraph, TextRun } from 'docx';
+import axios from 'axios';
 import AdBanner from '../../components/ads/AdBanner';
 import SEO from '../../components/SEO';
 import { useAuth } from '../../context/AuthContext';
 import { FiUploadCloud, FiFileText, FiCheckCircle } from 'react-icons/fi';
 
-// Worker setup: must match react-pdf's INTERNAL pdfjs-dist version, not the
-// top-level pdfjs-dist in package.json (they can differ and silently mismatch,
-// e.g. "API version does not match Worker version" errors). Using pdfjs.version
-// here pins the worker fetch to whatever version react-pdf actually bundles.
-pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+const API_BASE = import.meta.env.VITE_API_URL || 'https://pdf-suite-v2.onrender.com';
+const MAX_FILE_SIZE = 15 * 1024 * 1024; // keep in sync with backend/multer + sidecar limits
 
 const PdfToWord = () => {
-  const { canUseTool, incrementUsage } = useAuth();
+  const { canUseTool, incrementUsage, limitMessage } = useAuth();
   const [file, setFile] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState('');
   const [wordUrl, setWordUrl] = useState(null);
+  const [error, setError] = useState('');
 
   const onFileChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-      setWordUrl(null);
-      setProgress(0);
+    const selected = e.target.files && e.target.files[0];
+    if (!selected) return;
+    if (selected.size > MAX_FILE_SIZE) {
+      setError('That file is over the 15MB limit. Please try a smaller PDF.');
+      return;
     }
+    setFile(selected);
+    setWordUrl(null);
+    setError('');
   };
 
   const convertToWord = async () => {
     if (!file || !canUseTool()) return;
+
     setIsProcessing(true);
-    setProgress(0);
-    
+    setError('');
+    setProgress('Uploading document...');
+
+    // Free-tier sidecar spins down when idle - a cold start can take
+    // 30-60s, so let the user know instead of it looking stuck.
+    const wakeupTimer = setTimeout(() => {
+      setProgress('Still working - the converter may be waking up from idle...');
+    }, 6000);
+
     try {
-      const arrayBuffer = await file.arrayBuffer();
-      const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
-      const totalPages = pdf.numPages;
-      
-      const docChildren = [];
-      
-      for (let i = 1; i <= totalPages; i++) {
-        const page = await pdf.getPage(i);
-        const textContent = await page.getTextContent();
-        
-        // Combine text items into lines based on their vertical position (y coordinate)
-        // This is a very basic heuristic for text extraction
-        const strings = textContent.items.map(item => item.str);
-        const fullText = strings.join(' ');
-        
-        docChildren.push(
-          new Paragraph({
-            children: [new TextRun({ text: `--- Page ${i} ---`, bold: true })],
-          }),
-          new Paragraph({
-            children: [new TextRun(fullText)],
-          }),
-          new Paragraph({ text: "" }) // empty line
-        );
-        
-        setProgress(Math.round((i / totalPages) * 100));
-      }
-      
-      const doc = new Document({
-        sections: [{
-          properties: {},
-          children: docChildren,
-        }]
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await axios.post(`${API_BASE}/api/pdf/pdf-to-word`, formData, {
+        responseType: 'blob',
+        timeout: 100000,
       });
-      
-      const blob = await Packer.toBlob(doc);
-      const url = URL.createObjectURL(blob);
-      setWordUrl(url);
+
+      const blob = new Blob([response.data], {
+        type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      });
+      setWordUrl(URL.createObjectURL(blob));
       incrementUsage();
-    } catch (error) {
-      console.error("Error converting PDF to Word", error);
-      alert("Failed to convert PDF. The file might be encrypted or corrupted.");
+    } catch (err) {
+      let message = 'Failed to convert PDF. Please check your connection and try again.';
+      if (err.response?.data) {
+        try {
+          const text = await err.response.data.text();
+          message = JSON.parse(text).message || message;
+        } catch {
+          /* response wasn't JSON - keep default message */
+        }
+      }
+      setError(message);
     } finally {
+      clearTimeout(wakeupTimer);
       setIsProcessing(false);
+      setProgress('');
     }
   };
 
@@ -84,14 +77,20 @@ const PdfToWord = () => {
     <div className="animate-slide-up" style={{ maxWidth: '800px', margin: '0 auto', paddingTop: '2rem' }}>
       <SEO
         title="Convert PDF to Word Online Free | EWN"
-        description="Convert PDF files into editable Word documents for free, right in your browser."
+        description="Convert PDF files into editable Word documents for free, with tables, headings, and layout preserved."
         path="/pdf-to-word"
       />
 
       <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
         <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: 'var(--color-blue)' }}>PDF to Word</h1>
-        <p style={{ color: 'var(--color-text-muted)' }}>Extract text from your PDF into a Word document.</p>
+        <p style={{ color: 'var(--color-text-muted)' }}>Convert your PDF into an editable Word document.</p>
       </div>
+
+      {limitMessage && (
+        <p style={{ color: '#e53e3e', textAlign: 'center', marginBottom: '1rem', fontWeight: 500 }}>
+          {limitMessage}
+        </p>
+      )}
 
       {!wordUrl ? (
         <div className="card">
@@ -105,24 +104,27 @@ const PdfToWord = () => {
             <div style={{ textAlign: 'center' }}>
               <FiFileText style={{ fontSize: '4rem', color: 'var(--color-blue)', margin: '0 auto 1rem' }} />
               <h3 style={{ fontSize: '1.25rem', marginBottom: '1.5rem' }}>{file.name}</h3>
-              
+
               {isProcessing && (
-                <div style={{ marginBottom: '2rem', width: '100%', maxWidth: '400px', margin: '0 auto 2rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: '600' }}>
-                    <span>Extracting text...</span>
-                    <span>{progress}%</span>
-                  </div>
-                  <div style={{ width: '100%', height: '8px', backgroundColor: 'var(--color-border)', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ width: `${progress}%`, height: '100%', backgroundColor: 'var(--color-blue)', transition: 'width 0.2s' }}></div>
-                  </div>
+                <div style={{ marginBottom: '2rem' }}>
+                  <div
+                    style={{
+                      display: 'inline-block', width: '32px', height: '32px',
+                      border: '3px solid var(--color-border)', borderTop: '3px solid var(--color-blue)',
+                      borderRadius: '50%', animation: 'spin 0.8s linear infinite', marginBottom: '0.75rem',
+                    }}
+                  ></div>
+                  <p style={{ color: 'var(--color-text-muted)' }}>{progress}</p>
                 </div>
               )}
-              
+
+              {error && <p style={{ color: '#e53e3e', marginBottom: '1rem' }}>{error}</p>}
+
               <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
                 <button className="btn btn-primary" style={{ padding: '1rem 3rem' }} onClick={convertToWord} disabled={isProcessing}>
                   {isProcessing ? 'Converting...' : 'Convert to Word'}
                 </button>
-                <button className="btn btn-outline" onClick={() => setFile(null)} disabled={isProcessing}>
+                <button className="btn btn-outline" onClick={() => { setFile(null); setError(''); }} disabled={isProcessing}>
                   Cancel
                 </button>
               </div>
@@ -133,10 +135,10 @@ const PdfToWord = () => {
         <div className="card animate-fade-in" style={{ textAlign: 'center', padding: '4rem 2rem' }}>
           <FiCheckCircle style={{ fontSize: '5rem', color: 'var(--color-green)', margin: '0 auto 1.5rem' }} />
           <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Conversion Complete!</h2>
-          <p style={{ color: 'var(--color-text-muted)', marginBottom: '2rem' }}>Text has been extracted into a .docx file.</p>
-          
+          <p style={{ color: 'var(--color-text-muted)', marginBottom: '2rem' }}>Your PDF has been converted into an editable .docx file.</p>
+
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-            <a href={wordUrl} download="extracted_text.docx" className="btn btn-success" style={{ textDecoration: 'none', padding: '1rem 2rem' }}>
+            <a href={wordUrl} download="converted.docx" className="btn btn-success" style={{ textDecoration: 'none', padding: '1rem 2rem' }}>
               Download Word File
             </a>
             <button className="btn btn-outline" onClick={() => { setFile(null); setWordUrl(null); }}>
